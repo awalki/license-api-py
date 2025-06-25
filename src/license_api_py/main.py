@@ -1,10 +1,12 @@
 import httpx
 from pydantic import BaseModel
 
+
 class LoginResponse(BaseModel):
     username: str
     password: str
     hwid: str
+
 
 class LicenseAPI:
     def __init__(self, url):
@@ -25,16 +27,16 @@ class LicenseAPI:
         """
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f'{self.url}/auth/login',
+                f"{self.url}/auth/login",
                 json={
-                    'username': creds.username,
-                    'password': creds.password,
+                    "username": creds.username,
+                    "password": creds.password,
                 },
             )
 
             response.raise_for_status()
 
-            token = response.json()['access_token']
+            token = response.json()["access_token"]
 
             await self.link_hwid(creds.hwid, token)
 
@@ -50,10 +52,10 @@ class LicenseAPI:
         """
         async with httpx.AsyncClient() as client:
             response = await client.patch(
-                f'{self.url}/users/hwid',
-                json={'hwid': hwid},
+                f"{self.url}/users/hwid",
+                json={"hwid": hwid},
                 headers={
-                    'Authorization': f'Bearer {token}',
+                    "Authorization": f"Bearer {token}",
                 },
             )
 
