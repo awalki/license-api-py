@@ -2,7 +2,7 @@ import pytest
 import respx
 from httpx import Response, HTTPStatusError
 
-from license_api_py.main import LicenseAPI, LoginResponse
+from license_api.main import LicenseAPI, LoginResponse
 
 pytestmark = pytest.mark.anyio
 
