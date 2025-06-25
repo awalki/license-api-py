@@ -2,7 +2,7 @@ import httpx
 from pydantic import BaseModel
 
 
-class LoginResponse(BaseModel):
+class LoginRequest(BaseModel):
     username: str
     password: str
     hwid: str
@@ -18,12 +18,12 @@ class LicenseAPI:
         """
         self.url = url
 
-    async def login(self, creds: LoginResponse) -> bool:
+    async def login(self, creds: LoginRequest) -> bool:
         """
         Login to the license API
 
         Args:
-            creds (LoginResponse): The login credentials.
+            creds (LoginRequest): The login credentials.
         """
         async with httpx.AsyncClient() as client:
             response = await client.post(
