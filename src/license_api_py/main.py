@@ -18,8 +18,8 @@ class LicenseAPI:
         Args:
             url (str): The base URL of the license API.
         """
-        self.url = url
-        self.ws_url = f"{self.url.replace('http', 'ws')}/ws/notify"
+        self.url: str = url
+        self.token: str | None = None
 
     async def login(self, creds: LoginRequest) -> bool:
         """
@@ -36,14 +36,23 @@ class LicenseAPI:
 
             response.raise_for_status()
 
+            token = response.json()["access_token"]
+
+            self.token = token
+
         return True
     
     async def connect_to_websocket(self):
         """
         Connect to the WebSocket endpoint of the license API and implement ping.
         """
+        if not self.token:
+            raise ValueError("You must login before connecting to the WebSocket.")
+
+        ws_url = self.url.replace("https://", "wss://").replace("http://", "ws://") + f"/ws/notify?token={self.token}"
+
         try:
-            async with websockets.connect(self.ws_url) as ws:
+            async with websockets.connect(ws_url) as ws:
                 while True:
                     await asyncio.sleep(30)
                     await ws.ping()
