@@ -23,6 +23,7 @@ user = {
 async def main():
     if (await api.login(user)):
         print("Logged in successfully!")
+        await api.connect_to_websocket()
     else:
         print("Failed to login.")
 
