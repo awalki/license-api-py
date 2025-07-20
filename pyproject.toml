@@ -1,6 +1,6 @@
 [project]
 name = "license-api-py"
-version = "0.1.2"
+version = "0.1.3"
 description = "License API connector for Python"
 readme = "README.md"
 authors = [
