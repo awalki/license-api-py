@@ -1,5 +1,7 @@
 import httpx
 from pydantic import BaseModel
+import websockets
+import asyncio
 
 
 class LoginRequest(BaseModel):
@@ -17,6 +19,7 @@ class LicenseAPI:
             url (str): The base URL of the license API.
         """
         self.url = url
+        self.ws_url = f"{self.url.replace('http', 'ws')}/ws/notify"
 
     async def login(self, creds: LoginRequest) -> bool:
         """
@@ -28,37 +31,22 @@ class LicenseAPI:
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{self.url}/auth/login",
-                json={
-                    "username": creds.username,
-                    "password": creds.password,
-                },
+                json=creds
             )
 
             response.raise_for_status()
-
-            token = response.json()["access_token"]
-
-            await self.link_hwid(creds.hwid, token)
 
         return True
-
-    async def link_hwid(self, hwid: str, token: str):
+    
+    async def connect_to_websocket(self):
         """
-        Link the hardware ID to the user's account.
-
-        Args:
-            hwid (str): The hardware ID to link.
-            token (str): The authentication token.
+        Connect to the WebSocket endpoint of the license API and implement ping.
         """
-        async with httpx.AsyncClient() as client:
-            response = await client.patch(
-                f"{self.url}/users/hwid",
-                json={"hwid": hwid},
-                headers={
-                    "Authorization": f"Bearer {token}",
-                },
-            )
-
-            response.raise_for_status()
-
-        return response.status_code
+        try:
+            async with websockets.connect(self.ws_url) as ws:
+                while True:
+                    await asyncio.sleep(30)
+                    await ws.ping()
+        except Exception as e:
+            print(f"Connection error: {e}")
+            exit(1)
