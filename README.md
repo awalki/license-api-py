@@ -1,5 +1,7 @@
 # license-api-py
 
+License API client library made with Python
+
 ## Installation
 
 ```
@@ -12,18 +14,16 @@ pip install license-api-py
 import asyncio
 from license_api_py import LicenseAPI
 
-api = LicenseAPI("http://localhost:8080")
+api = LicenseAPI("http://localhost:3000")
 
 user = {
-    "username": "bluniparker",
-    "password": "your-password",
+    "key": "your-license-key",
     "hwid": "your-hwid"
 }
 
 async def main():
     if (await api.login(user)):
         print("Logged in successfully!")
-        await api.connect_to_websocket()
     else:
         print("Failed to login.")
 
